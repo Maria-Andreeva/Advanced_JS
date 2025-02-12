@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр отзывов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .product-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .product-list li {
+            background-color: #f9f9f9;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .review-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+        .review-list li {
+            background-color: #f1f1f1;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Просмотр отзывов</h2>
+        <ul class="product-list" id="product-list">
+            <!-- Список продуктов будет отображаться здесь -->
+        </ul>
+        <p><a href="add-reviews.html">Перейти к добавлению отзыва</a></p>
+    </div>
+
+    <script>
+        // Получаем элемент для списка продуктов
+        const productList = document.getElementById('product-list');
+
+        // Получаем отзывы из LocalStorage
+        const reviews = JSON.parse(localStorage.getItem('reviews')) || {};
+
+        // Функция для отображения списка продуктов
+        function displayProducts() {
+            productList.innerHTML = ''; // Очищаем список
+
+            // Если есть отзывы, отображаем их
+            if (Object.keys(reviews).length === 0) {
+                productList.innerHTML = '<p>Нет отзывов.</p>';
+                return;
+            }
+
+            // Создаем список продуктов
+            for (let productName in reviews) {
+                const productItem = document.createElement('li');
+                productItem.innerHTML = `
+                    <strong>${productName}</strong>
+                    <ul class="review-list">
+                        ${reviews[productName].map((review, index) => `
+                            <li>
+                                ${review}
+                                <button onclick="deleteReview('${productName}', ${index})">Удалить</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                productList.appendChild(productItem);
+            }
+        }
+
+        // Функция для удаления отзыва
+        function deleteReview(productName, index) {
+            // Удаляем отзыв из массива
+            reviews[productName].splice(index, 1);
+
+            // Если нет отзывов для этого продукта, удаляем сам продукт
+            if (reviews[productName].length === 0) {
+                delete reviews[productName];
+            }
+
+            // Обновляем данные в LocalStorage
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+
+            // Перерисовываем список
+            displayProducts();
+        }
+
+        // Отображаем продукты и отзывы при загрузке страницы
+        displayProducts();
+    </script>
+
+</body>
+</html>

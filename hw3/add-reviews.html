@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить отзыв</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Добавить отзыв о продукте</h2>
+        <label for="product-name">Название продукта:</label>
+        <input type="text" id="product-name" placeholder="Введите название продукта">
+        
+        <label for="review-text">Отзыв:</label>
+        <textarea id="review-text" rows="5" placeholder="Введите ваш отзыв"></textarea>
+
+        <button id="submit-review">Добавить отзыв</button>
+
+        <p>Перейти к <a href="view-reviews.html">просмотру отзывов</a>.</p>
+    </div>
+
+    <script>
+        // Получаем элементы
+        const productNameInput = document.getElementById('product-name');
+        const reviewTextInput = document.getElementById('review-text');
+        const submitButton = document.getElementById('submit-review');
+
+        // Добавление отзыва
+        submitButton.addEventListener('click', function() {
+            const productName = productNameInput.value.trim();
+            const reviewText = reviewTextInput.value.trim();
+
+            if (productName === '' || reviewText === '') {
+                alert('Пожалуйста, заполните все поля!');
+                return;
+            }
+
+            // Получаем существующие отзывы из LocalStorage или создаем новый объект
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || {};
+
+            // Если для этого продукта уже есть отзывы, добавляем новый отзыв
+            if (!reviews[productName]) {
+                reviews[productName] = [];
+            }
+
+            // Добавляем новый отзыв
+            reviews[productName].push(reviewText);
+
+            // Сохраняем обновленные отзывы в LocalStorage
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+
+            // Очищаем поля формы
+            productNameInput.value = '';
+            reviewTextInput.value = '';
+
+            alert('Отзыв успешно добавлен!');
+        });
+    </script>
+
+</body>
+</html>
